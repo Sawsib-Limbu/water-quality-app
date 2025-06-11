@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Water Quality Checker</title>
+</head>
+<body>
+    <h1>Check Water Quality</h1>
+    <form id="check-form">
+        <input type="text" id="place" placeholder="Enter place name" required />
+        <button type="submit">Check</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("check-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const place = document.getElementById("place").value;
+            fetch(`/water-quality?place=${encodeURIComponent(place)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById("result");
+                    if (data.error) {
+                        resultDiv.innerHTML = `<p style="color:red">${data.error}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <h3>Water Quality in ${data.place}</h3>
+                            <ul>
+                                <li>pH: ${data.data.pH}</li>
+                                <li>Temperature: ${data.data.temperature} °C</li>
+                                <li>Turbidity: ${data.data.turbidity} NTU</li>
+                                <li>Status: ${data.data.status}</li>
+                            </ul>
+                        `;
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
+
